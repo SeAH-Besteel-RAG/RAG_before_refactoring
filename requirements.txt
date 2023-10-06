@@ -147,8 +147,6 @@ ninja==1.11.1
 nltk==3.8.1
 numexpr==2.8.5
 numpy==1.25.2
-nvidia-cublas-cu12==12.2.5.6
-nvidia-cuda-runtime-cu12==12.2.140
 oauthlib==3.2.2
 olefile==0.46
 omegaconf==2.3.0
