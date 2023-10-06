@@ -13,7 +13,7 @@ from unstructured.staging.base import elements_to_json
 
 
 ###### from windows get local tesseract.
-pytesseract.pytesseract.tesseract_cmd = settings.local_tesseract_path
+# pytesseract.pytesseract.tesseract_cmd = settings.local_tesseract_path
 
 class PDFParser :
     def __init__ (self, file, strategy = "hi_res", model_name = "yolox") :
