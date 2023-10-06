@@ -34,7 +34,7 @@ def launch() :
 
     if proceed_button:
         # button Call
-        if files_pdf and api_key.startswith('sk-'):
+        if files_pdf :
             container = st.container()
             container.caption("filled Document")
 
