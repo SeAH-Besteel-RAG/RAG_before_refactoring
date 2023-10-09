@@ -1,95 +1,37 @@
 import streamlit as st
-import time
-
-from backend import StreamHandler, documentEnsembleRetreiver, cleanup_process, verif_df, table_trans, device_check
-
-from langchain.chains import RetrievalQA
-
-from langchain.llms import OpenAI
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import GooglePalm
-
-import settings
-
-from prompt_config import format_instructions, combined_prompt as prompt, qr_dic as qsheet
-
-import pandas as pd
-import ast
-
+from backend import device_check
+# from pages import 1_st_retriever as page_1, 2_st_add_item as page_2, 3_st_add_synonym as page_3
 
 def launch() :
-    st.set_page_config(page_title='File Q&A DEMO', page_icon="🦜", layout='wide', initial_sidebar_state='collapsed')
-    st.title("🦜 LangChain : SEAH File :red[Q&A] DEMO")
+    st.set_page_config(page_title='Seah Besteel 수주규격 자동화 서비스', page_icon="🦜", layout='centered', initial_sidebar_state='collapsed')
+    st.title("🦜 Seah Besteel : 수주규격 자동화 서비스")
 
-    with st.sidebar:
-        # 전달.
-        api_key = st.text_input("Enter apikey", value='', placeholder="Enter OpenAI Key", type="password")
-        files_pdf = st.file_uploader(
-            label="""Upload document here.""", 
-            type=['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt'], 
-            accept_multiple_files=True
-            )
+    st.markdown("""
+    <style>
+            border: 2px solid #f63366;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
-        proceed_button = st.button('Proceed',use_container_width=True)
+    st.markdown("""
+    <div class="table-box">
+    
+    | 항목                   | 설명                                          |
+    |------------------------|--------------------------------------------------|
+    | **자동화 서비스 이용** | 수주규격 자동화 페이지로 이동하여 사이드바에 API KEYS와 파일을 업로드하고 실행 버튼을 누르세요.  |
+    | **검토항목 추가**      | 검토항목 추가 페이지로 이동하여 검토항목명과 내용을 입력하세요.  |
+    | **동의어 추가**        | 동의어 추가 페이지로 이동하여 검토항목명과 추가할 동의어를 입력하세요.  |
 
-    if proceed_button:
-        # button Call
-        if files_pdf :
-            container = st.container()
-            container.caption("filled Document")
+    </div>
+    """, unsafe_allow_html=True)
 
-            with st.spinner(' Retrieving Information From Document...') :
-                # from backend: split and chunked at VectorStore.
-                retriever = documentEnsembleRetreiver(api_key, files_pdf)
-
-                # LLM Chain
-                llm = GooglePalm(google_api_key=settings.PALM_api_key, temperature=0, max_output_tokens=512)
-                # llm = OpenAI(model="gpt-3.5-turbo-instruct", api_key=settings.OpenAI_api_key, temperature=0, max_tokens=512)
-                # llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=settings.OpenAI_api_key, temperature=0, max_tokens=512)
-
-                chain = RetrievalQA.from_chain_type(
-                    llm=llm,
-                    chain_type="stuff",
-                    retriever=retriever,
-                )
-
-                for key, value in qsheet.items():
-                    message = prompt.format(question=key, description=value, 
-                                        format_instructions=format_instructions)
-                
-                    result_message = ast.literal_eval(chain.run(message))
-
-                    title = result_message['Name']
-                    ref = result_message['Reference']
-                    spec = result_message['Specification']
-                    
-                    
-                    #### dictionary일 경우 -> run 한 object 따로 빼서 쓸 생각.
-                    if isinstance(spec, dict):
-                    
-                        if verif_df(spec):
-                            table_df = table_trans(spec)
-                            st.write(title)
-                            st.write(table_df)
-
-                        else:
-                            table_df = pd.DataFrame(spec)
-                            st.write(title)
-                            st.write(table_df)
-                    
-                    else :
-                        st.write(result_message)
-
-
-            # Cleanup   
-            cleanup_process()
-
-        else:
-            errorFileOrKeyNotFound = st.error("Dataset or API key not provided. Please check.")
-            time.sleep(2.5)
-            errorFileOrKeyNotFound.empty()
 
 # launch
 if __name__  == "__main__" :
     device_check()
     launch()
+
+

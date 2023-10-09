@@ -1,5 +1,5 @@
 import os
-
+import json
 import pandas as pd
 
 from tika import parser
@@ -27,28 +27,6 @@ def device_check() :
     device = "cuda" if torch.cuda.is_available() else "cpu"
     return device
 
-# dict -> dataframe 변환 가능여부 확인
-def verif_df(spec):
-    verif_lst = [ (len(val), type(val)) for val in spec.values()]
-
-    for i in verif_lst[1:]: #(int, type)
-        if verif_lst[0] != (i[0], list):
-
-            return True
-        
-# dict -> dataframe(변환이 안될 때)
-def table_trans(dic):
-    df_lst = []
-
-    for key, value in dic.items():
-        if type(value) != list:
-            df_lst.append(pd.DataFrame([{key:value}]))
-        else:
-            df_lst.append(pd.DataFrame({key:value}))
-            
-    table_df=pd.concat(df_lst, axis=1)
-
-    return table_df
 
 #실행 이후에 collection 정리(일단 임시.)
 def cleanup_process() :
@@ -56,8 +34,6 @@ def cleanup_process() :
     st.markdown('===========END============')
 
 def document_handler(uploaded_files) : 
-    text_splitter = RecursiveCharacterTextSplitter(separators=['\n\n\n','\n\n','\n',' ','.',''], length_function=len, add_start_index=True)
-
     storage = []
     
     for file in uploaded_files : 
@@ -154,5 +130,46 @@ class StreamHandler(BaseCallbackHandler):
         self.previous_run_id = current_run_id
 
 
-# if __name__ == "__main__" : 
-#     print(device_check())
+# ======================= 검토항목 로드 및 저장 함수 ===========================
+## For : 검토항목 추가 및 질문지 수정
+# 검토항목 파일 로드
+def load_data():
+    with open("qr_dic.json", "r", encoding = "utf-8") as file:
+        data = json.load(file)
+    return data
+
+# 검토항목 파일 업데이트
+def save_data(data, filename= "qr_dic.json"):
+    with open(filename, "w", encoding = "utf-8") as file:
+        json.dump(data, file, indent=4)
+
+
+# =========================== 결과 출력 함수 ===============================
+
+# value 하나에 대한 전처리 함수
+def process_value(value):
+    # Case when value is a dictionary and has only one key-value pair
+    if isinstance(value, dict) and len(value) == 1:
+        key, sub_value = list(value.items())[0]
+        return f"{key} {sub_value}"
+    # Case when value is not a dictionary
+    else:
+        return value
+
+# 전체 결과 및 별도표 데이터프레임으로 반환
+def total_req(message):
+    # Process the 'Specification' part of the message
+    message["Specification"] = process_value(message["Specification"])
+    
+    value = message["Specification"]
+    
+    if isinstance(value, str):
+        temp_df = pd.DataFrame([message])
+        sub_df = pd.DataFrame()
+    elif isinstance(value, dict):
+        sub_df = pd.DataFrame([value])
+        message["Specification"] = "하단 표 참조"  
+        temp_df = pd.DataFrame([message])
+    
+    return  temp_df, sub_df
+
