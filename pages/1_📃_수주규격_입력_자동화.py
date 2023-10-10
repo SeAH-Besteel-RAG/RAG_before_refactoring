@@ -52,7 +52,7 @@ if proceed_button:
 
             # LLM Chain
             llm = GooglePalm(google_api_key=settings.PALM_api_key, temperature=0, max_output_tokens=512)
-            # llm = OpenAI(model="gpt-3.5-turbo-instruct", api_key=settings.OpenAI_api_key, temperature=0, max_tokens=512)
+            # llm = OpenAI(model="gpt-3.5-turbo-instruct", openai_api_key=settings.OpenAI_api_key, temperature=0, max_tokens=512)
             # llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=settings.OpenAI_api_key, temperature=0, max_tokens=512)
 
             chain = RetrievalQA.from_chain_type(

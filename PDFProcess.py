@@ -12,8 +12,6 @@ from unstructured.partition.pdf import partition_pdf
 from unstructured.staging.base import elements_to_json
 
 
-###### from windows get local tesseract.
-
 class PDFParser :
     def __init__ (self, file, strategy = "hi_res", model_name = "yolox") :
         self.pdf = pypdf.PdfReader(file)
