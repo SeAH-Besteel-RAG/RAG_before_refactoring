@@ -9,9 +9,9 @@ import json
 #################### pydantic output prompt
 
 response_schemas = [
-    ResponseSchema(name="Name", description="{question}."),
-    ResponseSchema(name="Reference", description="Source file name. If no reference is available, Use '-'."),
-    ResponseSchema(name="Specification" , description="Answer with correct data structure. If answer is None, string '-'.", type="string")
+    ResponseSchema(name="Name", description="{question},"),
+    ResponseSchema(name="Reference", description="Source file name. If no reference is available, Write '-',"),
+    ResponseSchema(name="Specification" , description="Answer with correct data structure. If answer is None, Write '-'", type="string")
 ]
 
 parser = StructuredOutputParser.from_response_schemas(response_schemas)
@@ -28,7 +28,9 @@ human_template = """
 Q : Based on the provided document, What is requested about ```{question}``` in this document?
 Further description about the {question} are as follows:
 
-description : ```{description}```
+description : ```{description}```.
+
+Answer strictly obey following instructions.
 
 {format_instructions}
 
@@ -43,3 +45,6 @@ combined_prompt = ChatPromptTemplate.from_messages([
     system_message,
     human_message_prompt
     ])
+
+if __name__ == "__main__" :
+    print(combined_prompt)
