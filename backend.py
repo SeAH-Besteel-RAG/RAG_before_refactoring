@@ -151,25 +151,41 @@ def process_value(value):
     # Case when value is a dictionary and has only one key-value pair
     if isinstance(value, dict) and len(value) == 1:
         key, sub_value = list(value.items())[0]
-        return f"{key} {sub_value}"
+        if isinstance(sub_value, str):
+            return f"{key} {sub_value}"
     # Case when value is not a dictionary
-    else:
-        return value
+    return value
 
 # 전체 결과 및 별도표 데이터프레임으로 반환
 def total_req(message):
     # Process the 'Specification' part of the message
     message["Specification"] = process_value(message["Specification"])
-    
-    value = message["Specification"]
-    
-    if isinstance(value, str):
-        temp_df = pd.DataFrame([message])
+
+    if isinstance(message["Specification"], str):
         sub_df = pd.DataFrame()
-    elif isinstance(value, dict):
-        sub_df = pd.DataFrame([value])
+        
+    elif isinstance(message["Specification"], dict):
+        # Specificationd의 값만 뽑아 dataframe으로 변환
+        key, value = message.popitem()
+        if len(value) == 1:
+            sub_df = pd.DataFrame(value)
+        else:
+            sub_df = pd.DataFrame({key:value})
+
         message["Specification"] = "하단 표 참조"  
-        temp_df = pd.DataFrame([message])
     
+    temp_df = pd.DataFrame([message])
+
     return  temp_df, sub_df
 
+data_2 = {
+"Name":"Hardness",
+"Reference":"DCF703-08(REV.0)",
+"Specification":{
+"Hardness":{
+"Min":"HRc 43 ↑",
+"Max":"HRc 55~62",
+}
+}
+}
+data_2
