@@ -1,4 +1,4 @@
-from langchain.llms import OpenAI
+from langchain_openai import OpenAI
 import settings
 import os
 
@@ -6,17 +6,15 @@ import pypdf
 import io
 import json
 
-import pytesseract
-
 from unstructured.partition.pdf import partition_pdf
 from unstructured.staging.base import elements_to_json
 
-
+import pytesseract
 ###### from windows get local tesseract.
-
+pytesseract.pytesseract.tesseract_cmd = settings.local_tesseract_path
 
 class PDFParser :
-    def __init__ (self, file, strategy = "hi_res", model_name = "yolox") :
+    def __init__ (self, file, strategy="hi_res", model_name = "yolox") :
         self.pdf = pypdf.PdfReader(file)
         self.strategy = strategy
         self.model_name = model_name # can use another model like "yolox_quantized" "detectron2_onnx"
@@ -105,8 +103,8 @@ class PDFParser :
         ##### html 형식으로 바꿔달라고 질문 던져 넣기.
             prompt = f"{table} \n\n Convert given table to formatted python dictionary. careful with structure and grammar."
 
-            table_completion = OpenAI(model=f'gpt-3.5-turbo-instruct', openai_api_key=settings.OpenAI_api_key)
-            table_completion_result = table_completion.predict(prompt)
+            table_completion = OpenAI(model=f'gpt-3.5-turbo-instruct', openai_api_key=settings.OPENAI_API_KEY)
+            table_completion_result = table_completion.invoke(prompt)
 
             ##### json값으로 바꿀 수 있어야만 추가. 아니면 pass
             try : 

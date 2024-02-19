@@ -2,8 +2,6 @@ import os
 import json
 import pandas as pd
 
-from tika import parser
-
 import streamlit as st
 from langchain.callbacks.base import BaseCallbackHandler
 
@@ -11,10 +9,12 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter, NLTKTextSpli
 from langchain.docstore.document import Document
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 
-#Retriever
-from langchain.vectorstores import Chroma
-from langchain.retrievers import BM25Retriever, EnsembleRetriever
+from tika import parser
 
+#Retriever
+from langchain.vectorstores.chroma import Chroma
+from langchain.retrievers import EnsembleRetriever
+from langchain.retrievers.bm25 import BM25Retriever
 from chromadb.errors import InvalidDimensionException
 
 #### pdf preprocessing
@@ -91,7 +91,9 @@ def documentEnsembleRetreiver(api_key, files) :
         Chroma().delete_collection()
         vectordb = Chroma.from_documents(documents=documents, embedding=embedding_function)
 
-    chroma_retriever = vectordb.as_retriever(search_type='mmr', search_kwargs={"k": 3})
+    score_threshold = 0.2
+    search_k = 2
+    chroma_retriever = vectordb.as_retriever(search_type="similarity_score_threshold", search_kwargs={'k': search_k ,'score_threshold': score_threshold})
 
     #BM25 Retriever
     bm25_retriever = BM25Retriever.from_documents(documents=documents)

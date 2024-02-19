@@ -1,6 +1,5 @@
+from langchain_core.messages.system import SystemMessage
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
-from langchain.prompts.chat import SystemMessage
-
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 
 import json
