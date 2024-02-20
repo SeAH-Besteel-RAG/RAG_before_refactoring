@@ -103,7 +103,7 @@ class PDFParser :
         ##### html 형식으로 바꿔달라고 질문 던져 넣기.
             prompt = f"{table} \n\n Convert given table to formatted python dictionary. careful with structure and grammar."
 
-            table_completion = OpenAI(model=f'gpt-3.5-turbo-instruct', openai_api_key=settings.OPENAI_API_KEY)
+            table_completion = OpenAI(model=f'gpt-3.5-turbo-instruct')
             table_completion_result = table_completion.invoke(prompt)
 
             ##### json값으로 바꿀 수 있어야만 추가. 아니면 pass

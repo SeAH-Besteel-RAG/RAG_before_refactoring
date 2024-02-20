@@ -73,9 +73,7 @@ def extract_text_from_file(uploaded_files):
 
     return storage
 
-def documentEnsembleRetreiver(api_key, files) :
-    os.environ["OPENAI_API_KEY"] = api_key
-
+def documentEnsembleRetreiver(files) :
     # documents = extract_text_from_file(files)
     documents = document_handler(files)
 

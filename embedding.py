@@ -1,14 +1,12 @@
-'''
-    property : sentence_transformers (pip install transformers)
-
-    embedding 쉽게 받아오려고 쓰는거. 
-    모델 이름은 기본으로 저장된 all-MiniLM-L6-v2 말고 다른거 쓰고싶으면 HuggingFace에서 알아서 찾아쓰길.
-    
-'''
-
 import os
 
 class EmbeddingDownLoader() :
+    '''
+        property : sentence_transformers (pip install transformers)
+
+        HuggingFace Embedding Model 쉽게 받아오려고 쓰는거. 
+        모델 이름은 기본으로 저장된 all-MiniLM-L6-v2 말고 다른거 쓰고싶으면 HuggingFace에서 검색해서 받으면 됩니다.
+    '''
     def __init__ (
     self,
     model : str = 'BAAI/bge-base-en-v1.5',
