@@ -1,6 +1,7 @@
 ##ignore api key##
 settings.py
 changelog.md
-
+log.txt
 sample_file.pdf
 __pycache__/
+
